@@ -122,7 +122,7 @@ export default function App() {
     })
   }, [currentUser]);
 
-  // Main content of homescreen. This is displayed conditionally from user auth status
+// Main content of homescreen. This is displayed conditionally from user auth status
 
   function mainContent() {
     if (isSignedIn) {

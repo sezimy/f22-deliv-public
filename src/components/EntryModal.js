@@ -13,7 +13,7 @@ import TextField from '@mui/material/TextField';
 import * as React from 'react';
 import { useState } from 'react';
 import { categories } from '../utils/categories';
-import { addEntry } from '../utils/mutations';
+import { addEntry, updateEntry, deleteEntry} from '../utils/mutations';
 
 // Modal component for individual entries.
 
@@ -31,6 +31,7 @@ export default function EntryModal({ entry, type, user }) {
    // TODO: For editing, you may have to add and manage another state variable to check if the entry is being edited.
 
    const [open, setOpen] = useState(false);
+   const [edit, setEdit] = useState(false);
    const [name, setName] = useState(entry.name);
    const [link, setLink] = useState(entry.link);
    const [description, setDescription] = useState(entry.description);
@@ -68,7 +69,25 @@ export default function EntryModal({ entry, type, user }) {
 
    // TODO: Add Edit Mutation Handler
 
+   const handleEdit = () => {
+      const newEdit = {
+         name: name,
+         link: link,
+         description: description,
+         category: category,
+         entryid: entry.id,
+      };
+
+      updateEntry(newEdit).catch(console.error);
+      handleClose();
+   };
+
    // TODO: Add Delete Mutation Handler
+
+   const handleDelete = () => {
+      deleteEntry({entryid: entry.id}).catch(console.error);
+      handleClose();
+   };
 
    // Button handlers for modal opening and inside-modal actions.
    // These buttons are displayed conditionally based on if adding or editing/opening.
@@ -87,6 +106,13 @@ export default function EntryModal({ entry, type, user }) {
       type === "edit" ?
          <DialogActions>
             <Button onClick={handleClose}>Cancel</Button>
+            <Button variant="contained" onClick={() => {setEdit(true)}}  sx={{
+                     display: edit === false ? 'inline' : 'none',
+                   }}>Edit</Button>
+            <Button variant="contained" onClick={handleEdit} sx={{
+                     display: edit !== false ? 'inline' : 'none',
+                   }} >Confirm</Button>
+            <Button variant="outlined" color="error" onClick={handleDelete}>Delete</Button>
          </DialogActions>
          : type === "add" ?
             <DialogActions>
@@ -110,6 +136,9 @@ export default function EntryModal({ entry, type, user }) {
                   variant="standard"
                   value={name}
                   onChange={(event) => setName(event.target.value)}
+                  InputProps={{
+                     readOnly: type === "edit" ? !edit : false,
+                   }}
                />
                <TextField
                   margin="normal"
@@ -120,6 +149,9 @@ export default function EntryModal({ entry, type, user }) {
                   variant="standard"
                   value={link}
                   onChange={(event) => setLink(event.target.value)}
+                  InputProps={{
+                     readOnly: type === "edit" ? !edit : false,
+                   }}
                />
                <TextField
                   margin="normal"
@@ -131,6 +163,9 @@ export default function EntryModal({ entry, type, user }) {
                   maxRows={8}
                   value={description}
                   onChange={(event) => setDescription(event.target.value)}
+                  InputProps={{
+                     readOnly: type === "edit" ? !edit : false,
+                   }}
                />
 
                <FormControl fullWidth sx={{ "margin-top": 20 }}>
@@ -141,6 +176,7 @@ export default function EntryModal({ entry, type, user }) {
                      value={category}
                      label="Category"
                      onChange={(event) => setCategory(event.target.value)}
+                     inputProps={{ readOnly: type === "edit" ? !edit : false }}
                   >
                      {categories.map((category) => (<MenuItem value={category.id}>{category.name}</MenuItem>))}
                   </Select>
