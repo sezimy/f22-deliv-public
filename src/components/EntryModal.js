@@ -49,6 +49,7 @@ export default function EntryModal({ entry, type, user }) {
 
    const handleClose = () => {
       setOpen(false);
+      setEdit(false);
    };
 
    // Mutation handlers
@@ -79,6 +80,7 @@ export default function EntryModal({ entry, type, user }) {
       };
 
       updateEntry(newEdit).catch(console.error);
+      setEdit(false)
       handleClose();
    };
 
